@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>えびぷと国政府</title>
+    <!-- CSS読み込み -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ヘッダー -->
+    <header>
+        <button id="menu-button">☰</button>
+        <h1>えびぷと国政府</h1>
+    </header>
+
+    <!-- コンテナ -->
+    <div class="container">
+
+        <!-- PC用サイドバー -->
+        <nav id="sidebar">
+            <h2>目次</h2>
+            <div id="toc"></div>
+        </nav>
+
+        <!-- スマホ用オーバーレイ目次 -->
+        <div id="mobile-menu">
+            <button id="close-menu">✕</button>
+            <div id="mobile-toc"></div>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <main id="content-area">
+            <div class="law-title" id="law-title"></div>
+            <!-- ここに章・条文が生成される -->
+        </main>
+    </div>
+
+    <!-- JS読み込み -->
+    <script src="js/script.js"></script>
+</body>
+
+</html>
