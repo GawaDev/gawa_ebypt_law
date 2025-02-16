@@ -87,6 +87,15 @@ header h1 {
   font-weight: 600;
 }
 
+header a {
+  text-decoration: none;
+  color: #fff;
+}
+
+header a:hover {
+  text-decoration: underline;
+}
+
 /* メニューボタン、検索トグル（アイコン） */
 #menu-button,
 #search-toggle {
@@ -134,7 +143,6 @@ header h1 {
   top: 70px;
   /* PC: ヘッダー下 */
   right: 1rem;
-  width: 220px;
   background-color: var(--color-panel);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);

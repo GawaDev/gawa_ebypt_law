@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     let lawData;
     try {
-        const response = await fetch("data/ebypt_law.json");
+        const response = await fetch("data/ebypt_law_teian.json");
         lawData = await response.json();
     } catch (error) {
         console.error("JSONデータの取得に失敗しました:", error);
