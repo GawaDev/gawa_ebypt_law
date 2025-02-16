@@ -51,52 +51,50 @@ document.addEventListener("DOMContentLoaded", async () => {
                 articleHeading.textContent = `第${article.articleNumber}条（${article.articleTitle}）`;
                 contentArea.appendChild(articleHeading);
 
-                // パラグラフ（本文＋放送回＋王コメント）
+                // パラグラフ
                 if (article.paragraphs && article.paragraphs.length > 0) {
                     article.paragraphs.forEach((paraData) => {
-                        // 旧形式(文字列)にも対応可能なサンプル
-                        let text, broadcast, kingComment;
+                        let text, evidence, kingComment;
                         if (typeof paraData === "string") {
                             text = paraData;
-                            broadcast = "";
+                            evidence = "";
                             kingComment = "";
                         } else {
                             text = paraData.text || "";
-                            broadcast = paraData.broadcast || "";
+                            evidence = paraData.evidence || "";
                             kingComment = paraData.kingComment || "";
                         }
 
-                        // パラグラフ要素
+                        // パラグラフのラッパ
                         const paragraphDiv = document.createElement("div");
                         paragraphDiv.classList.add("article-paragraph");
-                        paragraphDiv.textContent = text;
 
-                        // 追加情報 (hover/clickで表示)
-                        const refInfoDiv = document.createElement("div");
-                        refInfoDiv.classList.add("reference-info");
+                        // 条文テキスト
+                        const textP = document.createElement("p");
+                        textP.textContent = text;
+                        paragraphDiv.appendChild(textP);
 
-                        if (broadcast) {
-                            const pBroadcast = document.createElement("p");
-                            pBroadcast.innerHTML = `<span>根拠放送:</span> ${broadcast}`;
-                            refInfoDiv.appendChild(pBroadcast);
+                        // 参照ボックス（初期は閉じる）
+                        const referenceBox = document.createElement("div");
+                        referenceBox.classList.add("reference-box");
+
+                        if (evidence) {
+                            const pEvidence = document.createElement("p");
+                            pEvidence.innerHTML = `<span>根拠</span>${evidence}`;
+                            referenceBox.appendChild(pEvidence);
                         }
                         if (kingComment) {
                             const pComment = document.createElement("p");
-                            pComment.innerHTML = `<span>王コメント:</span> ${kingComment}`;
-                            refInfoDiv.appendChild(pComment);
+                            pComment.innerHTML = `<span>王コメント</span>${kingComment}`;
+                            referenceBox.appendChild(pComment);
                         }
 
-                        paragraphDiv.appendChild(refInfoDiv);
+                        paragraphDiv.appendChild(referenceBox);
                         contentArea.appendChild(paragraphDiv);
 
-                        // クリックで固定表示(pinned)切り替え
-                        paragraphDiv.addEventListener("click", (e) => {
-                            // 一旦、全ての pinned を解除
-                            unpinAllParagraphs();
-                            // 自分に pinned クラスを付与（解除したい場合はトグルにしてもOK）
-                            paragraphDiv.classList.add("pinned");
-                            // イベントバブルを止める(外側へのクリック判定をキャンセル)
-                            e.stopPropagation();
+                        // クリックで開閉
+                        paragraphDiv.addEventListener("click", () => {
+                            paragraphDiv.classList.toggle("pinned");
                         });
                     });
                 }
@@ -105,11 +103,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // ハンバーガーメニュー開閉
+    const mobileMenu = document.getElementById("mobile-menu");
+
     document.getElementById("menu-button").addEventListener("click", () => {
-        document.getElementById("mobile-menu").classList.add("active");
+        mobileMenu.classList.add("active");
     });
+
     document.getElementById("close-menu").addEventListener("click", () => {
-        document.getElementById("mobile-menu").classList.remove("active");
+        mobileMenu.classList.remove("active");
+    });
+
+    // ★ 追加：モバイル目次がタップされたら閉じる
+    document.querySelectorAll("#mobile-toc a").forEach(link => {
+        link.addEventListener("click", () => {
+            // メニューを閉じる
+            mobileMenu.classList.remove("active");
+        });
     });
 
     // PCスクロール時のTOCハイライト
@@ -132,20 +141,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     });
-
-    // 画面全体クリックで pinned を解除(他所クリック時)
-    document.addEventListener("click", (e) => {
-        // メニュー系のクリックなどもありうるが、とりあえず全Paragraphのpinnedを外す
-        unpinAllParagraphs();
-    });
-
-    // pinnedクラスを全て外す関数
-    function unpinAllParagraphs() {
-        const pinnedEls = document.querySelectorAll(".article-paragraph.pinned");
-        pinnedEls.forEach(el => el.classList.remove("pinned"));
-    }
-
 });
+
 
 /************************************************
  * 漢数字変換 (簡易)

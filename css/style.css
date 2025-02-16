@@ -1,36 +1,87 @@
-/* === リセット === */
+/* ================================
+  ルート変数定義
+================================ */
+:root {
+  /* 主要色 */
+  --color-primary: #0d6efd;
+  /* テキスト/見出し */
+  --color-text: #333;
+  /* 背景 */
+  --color-bg: #f5f5f7;
+  /* 白系パネル (サイドバー, カード等) */
+  --color-panel: #fff;
+  /* 枠線・境界 */
+  --color-border: #ddd;
+  /* ホバー/アクティブ時 */
+  --color-hover: #ddd;
+
+  /* 参照ボックス */
+  --color-ref: #ccc;
+  --color-ref-span: #eee;
+
+  /* サイズ・レイアウトなど */
+  --header-height: 60px;
+  --sidebar-width: 240px;
+  --spacing-unit: 1rem;
+  --radius-sm: 0.3rem;
+  --radius-md: 0.5rem;
+
+  /* フォント & 余白 */
+  --font-main: "Helvetica Neue", Arial, sans-serif;
+  --line-height: 1.6;
+
+  /* トランジション */
+  --transition-fast: 0.2s;
+  --transition-medium: 0.3s;
+  --transition-long: 1s;
+}
+
+/* ================================
+  ベースリセット
+================================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* === ベーススタイル === */
-body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  color: #333;
-  background-color: #f5f5f7;
-  line-height: 1.6;
+/* ゆっくり遷移する */
+html {
+  scroll-behavior: smooth;
 }
 
-/* === ヘッダー === */
+/* ================================
+  ベーススタイル
+================================ */
+body {
+  font-family: var(--font-main);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: var(--line-height);
+}
+
+/* ================================
+  ヘッダー
+================================ */
 header {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 60px;
-  background-color: #343a40;
+  height: var(--header-height);
+  background-color: var(--color-primary);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
+
 header h1 {
   font-size: 1.4rem;
   font-weight: 600;
 }
+
 #menu-button {
   position: absolute;
   left: 16px;
@@ -39,176 +90,232 @@ header h1 {
   border: none;
   cursor: pointer;
   font-size: 1.2rem;
-  display: none; /* PCでは非表示 */
+  display: none;
+  /* PCでは非表示 */
 }
 
-/* === コンテナ === */
+/* ================================
+  コンテナ
+================================ */
 .container {
   display: flex;
   width: 100%;
   min-height: 100vh;
-  margin-top: 60px; /* ヘッダー高さ */
+  margin-top: var(--header-height);
+  /* ヘッダー高さ */
 }
 
-/* === サイドバー（PC表示） === */
+/* ================================
+  サイドバー（PC表示）
+================================ */
 nav#sidebar {
-  width: 240px;
-  background-color: #fff;
-  border-right: 1px solid #ddd;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: var(--sidebar-width);
+  background-color: var(--color-panel);
+  border-right: 1px solid var(--color-border);
+  padding: var(--spacing-unit);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   height: 100%;
-  margin: 1rem;
-  top: calc(60px + 1rem);
+  margin: var(--spacing-unit);
+  top: calc(var(--header-height) + var(--spacing-unit));
   position: sticky;
-  border-radius: 0.6rem;
-  max-height: 70vh;
+  border-radius: var(--radius-md);
+  max-height: 70svh;
   overflow-x: hidden;
-  overflow-y: scroll;
 }
+
 nav#sidebar h2 {
   font-size: 1rem;
   margin-bottom: 1rem;
-  color: #495057;
+  color: var(--color-text);
 }
+
 #toc a {
   display: block;
-  color: #495057;
+  color: var(--color-text);
   text-decoration: none;
   font-size: 0.9rem;
   margin: 0.25rem 0;
   padding: 0.4rem 0.6rem;
-  border-radius: 0.3rem;
-  transition: background-color 0.2s;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
 }
+
 #toc a:hover {
-  background-color: #e9ecef;
+  background-color: var(--color-hover);
 }
+
 #toc a.active {
-  background-color: #dee2e6;
+  background-color: var(--color-hover);
   font-weight: 600;
 }
 
-/* === スマホ用オーバーレイメニュー === */
+/* ================================
+  スマホ用オーバーレイメニュー
+================================ */
 #mobile-menu {
   position: fixed;
   top: 0;
   left: -100%;
   width: 80%;
   max-width: 300px;
-  height: 100vh;
-  background-color: #fff;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-  transition: left 0.3s ease-in-out;
-  padding: 1rem;
+  height: 100svh;
+  background-color: var(--color-primary);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: left var(--transition-medium) ease-in-out;
   z-index: 2000;
+
+  /* 目次をスクロールさせるためflexを使用 */
+  display: flex;
+  flex-direction: column;
 }
+
 #mobile-menu.active {
   left: 0;
 }
+
+/* メニュー上部（×ボタン）エリア */
+#mobile-menu-header {
+  flex: 0 0 auto;
+  /* 高さ自動(内容分) */
+  padding: var(--spacing-unit);
+}
+
+/* ×ボタン */
 #close-menu {
-  background-color: #dc3545;
-  color: #fff;
+  background-color: #fff;
+  color: var(--color-primary);
   border: none;
-  padding: 8px 12px;
+  padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
+
+/* メニューのスクロール部分 */
+#mobile-menu-body {
+  flex: 1 1 auto;
+  /* 残りの空間を使う */
+  overflow-y: auto;
+  /* 縦スクロール */
+  padding: var(--spacing-unit);
+}
+
+/* 中のリンク */
 #mobile-toc a {
   display: block;
   text-decoration: none;
-  color: #343a40;
+  color: #fff;
   padding: 0.4rem 0.6rem;
-  border-radius: 0.3rem;
+  border-radius: var(--radius-sm);
   margin: 0.25rem 0;
-  transition: background-color 0.2s;
-}
-#mobile-toc a:hover {
-  background-color: #f1f3f5;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
-/* === 本文エリア === */
+#mobile-toc a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+
+
+/* ================================
+  本文エリア
+================================ */
 main#content-area {
   flex: 1;
   padding: 2rem;
-  background-color: #f5f5f7;
+  background-color: var(--color-bg);
 }
+
 .law-title {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 1.5rem;
   text-align: center;
-  color: #212529;
+  color: var(--color-text);
 }
+
+/* 見出し（章・条）スクロール補正 */
+.chapter-heading,
+.article-heading {
+  scroll-margin-top: calc(var(--header-height) + 20px);
+}
+
+/* 章見出し */
 .chapter-heading {
   font-size: 1.3rem;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  color: #212529;
+  color: var(--color-text);
   font-weight: 600;
-  border-left: 4px solid #0d6efd;
+  border-left: 4px solid var(--color-primary);
   padding-left: 0.5rem;
 }
+
+/* 条見出し */
 .article-heading {
   font-size: 1.1rem;
   margin: 1.2rem 0 0.5rem 0;
-  color: #0d6efd;
+  color: var(--color-primary);
   font-weight: 600;
 }
 
-/* === パラグラフ＆ツールチップ（放送回・王コメント） === */
-.article-paragraph {
-  margin: 0.5rem 0 1rem 1rem;
-  line-height: 1.7;
-  font-size: 0.95rem;
-  position: relative; /* relativeにすることで内部の絶対配置が有効になる */
-  cursor: pointer; /* クリックできることを示す */
+/* ================================
+  パラグラフ＆エビデンス表示
+================================ */
+.article-paragraph>p {
+  text-indent: 1rem;
 }
 
-/* ツールチップ領域 */
-.reference-info {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  display: none; /* 初期非表示 */
-  background-color: #fff;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  margin-top: 0.2rem;
-  width: 280px;
-  font-size: 0.85rem;
-  color: #555;
-  z-index: 10; /* 前面に出す */
+/* --- アニメーション前の閉じた状態 --- */
+.reference-box {
+  font-size: 0.8rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  background-color: #ccc;
+  border-radius: 0.5rem;
 }
-.reference-info p {
-  margin: 0.25rem 0;
+
+.reference-box>p {
+  margin: .25rem;
 }
+
+/* pinned時に高さを大きくし、内容を表示 */
+.article-paragraph.pinned .reference-box {
+  max-height: 500px;
+}
+
+/* エビデンスのspanを角丸グレー背景に */
+.reference-box p span,
 .reference-info span {
-  font-weight: 600;
-  color: #333;
+  background-color: var(--color-ref-span);
+  border-radius: var(--radius-md);
+  padding: 0.25rem;
+  margin-right: 0.25rem;
+  line-height: 1.5rem;
 }
 
-/* === ホバー時に一時表示 === */
-.article-paragraph:hover:not(.pinned) .reference-info {
-  display: block;
-}
-
-/* === pinnedクラスが付いている場合は常に表示 === */
+/* pinnedクラスが付いている場合は常に表示 */
 .article-paragraph.pinned .reference-info {
   display: block;
 }
 
-/* === スマホ表示時 === */
+/* ================================
+  スマホ表示時
+================================ */
 @media (max-width: 767px) {
   nav#sidebar {
-    display: none; /* PC用サイドバー非表示 */
+    display: none;
+    /* PC用サイドバー非表示 */
   }
+
   #menu-button {
-    display: block; /* スマホでハンバーガーボタン表示 */
+    display: block;
+    /* スマホでハンバーガーメニュー表示 */
   }
+
   main#content-area {
     margin: 0;
     width: 100%;
