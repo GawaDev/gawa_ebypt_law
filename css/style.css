@@ -2,15 +2,15 @@
    ルート変数定義
 ================================ */
 :root {
-  /* プライマリカラー */
+  /* プライマリカラー（青） */
   --color-primary: #0073a8;
-  /* セカンダリカラー 王の今年のラッキーカラー */
+  /* セカンダリカラー（例: 王の今年のラッキーカラー） */
   --color-secondary: #e64d00;
   /* テキスト/見出し */
   --color-text: #333;
   /* 背景 */
   --color-bg: #f5f5f7;
-  /* 白系パネル */
+  /* 白系パネル（主にカード・サイドバー・モバイルメニュー背景に使用） */
   --color-panel: #fff;
   /* 枠線・境界 */
   --color-border: #ddd;
@@ -99,8 +99,9 @@ header h1 {
 }
 
 #menu-button {
-  display: none;
   left: 16px;
+  display: none;
+  /* PCでは非表示 */
 }
 
 #search-toggle {
@@ -118,9 +119,7 @@ header h1 {
   padding: 0.5rem 1rem;
   font-size: 0.7rem;
   background-color: var(--color-primary);
-  /* 青背景 */
   color: #fff;
-  /* 白文字 */
   text-align: center;
   z-index: 1100;
   word-wrap: break-word;
@@ -135,13 +134,13 @@ header h1 {
   top: 70px;
   /* PC: ヘッダー下 */
   right: 1rem;
+  width: 220px;
   background-color: var(--color-panel);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   z-index: 1500;
   overflow: hidden;
-
   display: flex;
   flex-direction: column;
   padding: 0.5rem;
@@ -174,6 +173,8 @@ header h1 {
 
 .nav-row {
   gap: 0.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .nav-row button {
@@ -190,7 +191,23 @@ header h1 {
   color: #555;
 }
 
+/* スマホ用検索バー */
+@media (max-width: 767px) {
+  #search-bar {
+    top: inherit;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(150%);
+    width: 90%;
+    max-width: 320px;
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+  }
 
+  #search-bar.active {
+    transform: translateX(-50%) translateY(0);
+  }
+}
 
 /* ================================
    コンテナ
@@ -248,6 +265,7 @@ nav#sidebar h2 {
 
 /* ================================
    スマホ用オーバーレイメニュー
+   ※ 白背景、アクセントとしてリンクに青を設定
 ================================ */
 #mobile-menu {
   position: fixed;
@@ -256,7 +274,7 @@ nav#sidebar h2 {
   width: 80%;
   max-width: 300px;
   height: 100svh;
-  background-color: var(--color-primary);
+  background-color: var(--color-panel);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
   transition: left var(--transition-medium) ease-in-out;
   z-index: 2000;
@@ -274,8 +292,8 @@ nav#sidebar h2 {
 }
 
 #close-menu {
-  background-color: #fff;
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: #fff;
   border: none;
   padding: 0.5rem 1rem;
   font-size: 1rem;
@@ -293,7 +311,7 @@ nav#sidebar h2 {
 #mobile-toc a {
   display: block;
   text-decoration: none;
-  color: #fff;
+  color: var(--color-primary);
   padding: 0.4rem 0.6rem;
   border-radius: var(--radius-sm);
   margin: 0.25rem 0;
@@ -301,8 +319,7 @@ nav#sidebar h2 {
 }
 
 #mobile-toc a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background-color: var(--color-hover);
 }
 
 /* ================================
@@ -312,6 +329,7 @@ main#content-area {
   flex: 1;
   padding: 2rem;
   padding-bottom: 5rem;
+  /* 固定説明文分の余白 */
   background-color: var(--color-bg);
 }
 
@@ -363,7 +381,6 @@ main#content-area {
 }
 
 .reference-box>p {
-  display: inline-block;
   margin: 0.25rem;
 }
 
@@ -411,20 +428,19 @@ main#content-area {
     padding-bottom: 5rem;
   }
 
-  /* スマホ用検索バー */
-  @media (max-width: 767px) {
-    #search-bar {
-      top: auto;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%) translateY(150%);
-      width: 85%;
-      border-radius: var(--radius-md);
-      margin-bottom: 1rem;
-    }
+  /* スマホ用検索バー: 下部にカード風 */
+  #search-bar {
+    top: inherit;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(150%);
+    width: 90%;
+    max-width: 320px;
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+  }
 
-    #search-bar.active {
-      transform: translateX(-50%) translateY(0);
-    }
+  #search-bar.active {
+    transform: translateX(-50%) translateY(0);
   }
 }
