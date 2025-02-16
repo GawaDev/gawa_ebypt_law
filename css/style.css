@@ -2,13 +2,15 @@
    ルート変数定義
 ================================ */
 :root {
-  /* 主要色 */
-  --color-primary: #0d6efd;
+  /* プライマリカラー */
+  --color-primary: #0073a8;
+  /* セカンダリカラー 王の今年のラッキーカラー */
+  --color-secondary: #e64d00;
   /* テキスト/見出し */
   --color-text: #333;
   /* 背景 */
   --color-bg: #f5f5f7;
-  /* 白系パネル (サイドバー, カード等) */
+  /* 白系パネル */
   --color-panel: #fff;
   /* 枠線・境界 */
   --color-border: #ddd;
@@ -16,8 +18,8 @@
   --color-hover: #ddd;
 
   /* 参照ボックス */
-  --color-ref: #ccc;
-  --color-ref-span: #eee;
+  --color-ref: #ededed;
+  --color-ref-span: var(--color-primary);
 
   /* サイズ・レイアウトなど */
   --header-height: 60px;
@@ -27,7 +29,7 @@
   --radius-md: 0.5rem;
 
   /* フォント & 余白 */
-  --font-main: "Helvetica Neue", Arial, sans-serif;
+  --font-main: "Zen Maru Gothic", "Helvetica Neue", Arial, sans-serif;
   --line-height: 1.6;
 
   /* トランジション */
@@ -37,6 +39,7 @@
 
   /* 検索ハイライト色 */
   --highlight-bg: yellow;
+  --highlight-cr-bg: orange;
 }
 
 /* ================================
@@ -48,7 +51,6 @@
   box-sizing: border-box;
 }
 
-/* ゆっくり遷移する */
 html {
   scroll-behavior: smooth;
 }
@@ -85,86 +87,110 @@ header h1 {
   font-weight: 600;
 }
 
-/* 説明文（右寄せ・小さい字） */
-.header-description {
+/* メニューボタン、検索トグル（アイコン） */
+#menu-button,
+#search-toggle {
   position: absolute;
-  /* タイトル下に配置 */
-  right: 1rem;
-  bottom: 0.2rem;
-  font-size: 0.7rem;
-  opacity: 0.9;
+  background: transparent;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
 }
 
 #menu-button {
-  position: absolute;
-  left: 16px;
-  background: transparent;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
   display: none;
-  /* PCでは非表示 */
+  left: 16px;
 }
 
-/* 検索アイコン */
 #search-toggle {
-  position: absolute;
   right: 16px;
-  background: transparent;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
 }
 
 /* ================================
-   検索UI (PCはヘッダー下、スマホは画面下)
+   固定説明文 (常時画面下部)
+================================ */
+#page-description {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  background-color: var(--color-primary);
+  /* 青背景 */
+  color: #fff;
+  /* 白文字 */
+  text-align: center;
+  z-index: 1100;
+  word-wrap: break-word;
+}
+
+/* ================================
+   検索バー
+   PC: 右上に固定、スマホ: 下部カード風
 ================================ */
 #search-bar {
-  position: absolute;
-  top: calc(var(--header-height) + 5px);
-  /* ヘッダーの下あたり(PC) */
+  position: fixed;
+  top: 70px;
+  /* PC: ヘッダー下 */
   right: 1rem;
   background-color: var(--color-panel);
   border: 1px solid var(--color-border);
-  padding: 0.5rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  display: none;
-  /* 初期は非表示 */
   z-index: 1500;
+  overflow: hidden;
 
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  padding: 0.5rem;
+  transform: translateX(150%);
+  transition: transform 0.3s ease-in-out;
 }
 
 #search-bar.active {
+  transform: translateX(0);
+}
+
+.search-bar-row {
+  margin-bottom: 0.5rem;
   display: flex;
-  /* 表示 */
+  align-items: center;
+  justify-content: center;
+}
+
+.search-bar-row:last-child {
+  margin-bottom: 0;
 }
 
 #search-input {
-  width: 150px;
-  padding: 0.2rem 0.4rem;
-  font-size: 0.9rem;
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1.25rem;
 }
 
-.search-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
+.nav-row {
+  gap: 0.5rem;
 }
 
-.search-nav button {
+.nav-row button {
+  background: transparent;
+  border: none;
   cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0 1rem;
+  color: var(--color-primary);
 }
 
 #search-current {
   font-size: 0.8rem;
   color: #555;
 }
+
+
 
 /* ================================
    コンテナ
@@ -174,7 +200,6 @@ header h1 {
   width: 100%;
   min-height: 100vh;
   margin-top: var(--header-height);
-  /* ヘッダー高さ */
 }
 
 /* ================================
@@ -286,6 +311,7 @@ nav#sidebar h2 {
 main#content-area {
   flex: 1;
   padding: 2rem;
+  padding-bottom: 5rem;
   background-color: var(--color-bg);
 }
 
@@ -297,7 +323,7 @@ main#content-area {
   color: var(--color-text);
 }
 
-/* 見出し（章・条）スクロール補正 */
+/* 見出しスクロール補正 */
 .chapter-heading,
 .article-heading {
   scroll-margin-top: calc(var(--header-height) + 20px);
@@ -320,7 +346,9 @@ main#content-area {
   font-weight: 600;
 }
 
-/* パラグラフ＆エビデンス表示 */
+/* ================================
+   パラグラフ＆エビデンス表示
+================================ */
 .article-paragraph>p {
   text-indent: 1rem;
 }
@@ -329,12 +357,13 @@ main#content-area {
   font-size: 0.8rem;
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s ease;
-  background-color: #ccc;
+  transition: max-height var(--transition-medium) ease-in-out;
+  background-color: var(--color-ref);
   border-radius: 0.5rem;
 }
 
 .reference-box>p {
+  display: inline-block;
   margin: 0.25rem;
 }
 
@@ -349,55 +378,53 @@ main#content-area {
   padding: 0.25rem;
   margin-right: 0.25rem;
   line-height: 1.5rem;
+  color: #fff;
 }
 
 /* 検索ハイライト */
 .highlight {
   background-color: var(--highlight-bg);
+  border-radius: var(--radius-sm);
   color: #000;
-  /* 背景黄色なので文字は黒系に */
+}
+
+.highlight.current {
+  background-color: var(--highlight-cr-bg);
 }
 
 /* ================================
-   スマホ表示時
+   スマホ表示時 (共通調整)
 ================================ */
 @media (max-width: 767px) {
   nav#sidebar {
     display: none;
-    /* PC用サイドバー非表示 */
   }
 
   #menu-button {
     display: block;
-    /* スマホでハンバーガーメニュー表示 */
-  }
-
-  /* 検索バーを画面下部に固定 */
-  #search-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: auto;
-    width: 90%;
-    border-radius: 0;
-    display: none;
-    justify-content: center;
-    transition: 1s;
-  }
-
-  #search-bar.active {
-    display: flex;
   }
 
   main#content-area {
     margin: 0;
     width: 100%;
     padding: 1rem;
+    padding-bottom: 5rem;
   }
 
-  .header-description {
-    display: none;
-    /* スマホで説明文を隠す場合 */
+  /* スマホ用検索バー */
+  @media (max-width: 767px) {
+    #search-bar {
+      top: auto;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(150%);
+      width: 85%;
+      border-radius: var(--radius-md);
+      margin-bottom: 1rem;
+    }
+
+    #search-bar.active {
+      transform: translateX(-50%) translateY(0);
+    }
   }
 }

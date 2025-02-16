@@ -5,6 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>えびぷと国法律</title>
+    <!-- GoogleFonts 読み込み-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
+    <!-- Font Awesome 読み込み -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-acX4+..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- CSS読み込み -->
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -13,27 +20,27 @@
 
     <!-- ヘッダー -->
     <header>
-        <button id="menu-button">☰</button>
+        <button id="menu-button"><i class="fa fa-bars"></i></button>
         <h1>えびぷと国法律</h1>
-        <button id="search-toggle">🔍</button>
-        <p class="header-description">（ここに小さな説明文が入ります）</p>
+        <button id="search-toggle"><i class="fa fa-search"></i></button>
     </header>
 
     <!-- 検索バー -->
     <div id="search-bar">
-        <input type="text" id="search-input" placeholder="キーワードを入力…">
-        <div class="search-nav">
-            <button id="search-first">&laquo;</button>
-            <button id="search-prev">&lt;</button>
+        <div class="search-bar-row">
+            <input type="text" id="search-input" placeholder="キーワードを入力…" />
+        </div>
+        <div class="search-bar-row nav-row">
+            <button id="search-first" title="最初へ"><i class="fa fa-angle-double-left"></i></button>
+            <button id="search-prev" title="前へ"><i class="fa fa-angle-left"></i></button>
             <span id="search-current">0/0</span>
-            <button id="search-next">&gt;</button>
-            <button id="search-last">&raquo;</button>
+            <button id="search-next" title="次へ"><i class="fa fa-angle-right"></i></button>
+            <button id="search-last" title="最後へ"><i class="fa fa-angle-double-right"></i></button>
         </div>
     </div>
 
     <!-- コンテナ -->
     <div class="container">
-
         <!-- PC用サイドバー -->
         <nav id="sidebar">
             <h2>目次</h2>
@@ -42,11 +49,9 @@
 
         <!-- スマホ用オーバーレイメニュー -->
         <div id="mobile-menu">
-            <!-- 1) メニュー上部のヘッダー -->
             <div id="mobile-menu-header">
-                <button id="close-menu">✕</button>
+                <button id="close-menu"><i class="fa fa-times"></i></button>
             </div>
-            <!-- 2) スクロール領域（目次リンク） -->
             <div id="mobile-menu-body">
                 <div id="mobile-toc"></div>
             </div>
@@ -57,6 +62,11 @@
             <div class="law-title" id="law-title"></div>
             <!-- ここに章・条文が生成される -->
         </main>
+    </div>
+
+    <!-- 固定説明文（常時画面下部に表示） -->
+    <div id="page-description">
+        このウェブサイトはAuDee「217find!」のファンサイトです。本番組に関連する各団体や個人とは関係ありませんのでご注意ください。
     </div>
 
     <!-- JS読み込み -->

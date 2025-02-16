@@ -1,10 +1,6 @@
-/************************************************
- * 初期化処理
- ***********************************************/
 document.addEventListener("DOMContentLoaded", async () => {
     let lawData;
     try {
-        // JSONファイル読み込み
         const response = await fetch("data/ebypt_law.json");
         lawData = await response.json();
     } catch (error) {
@@ -17,13 +13,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const contentArea = document.getElementById("content-area");
     const lawTitleElement = document.getElementById("law-title");
 
-    // タイトル設定
     lawTitleElement.textContent = lawData.title || "無題の法律";
 
-    // すべてのパラグラフDOMを保存し、検索対象にする
     let allParagraphNodes = [];
 
-    // 章・条文生成
     lawData.chapters.forEach((chapter) => {
         const chapterId = `chapter-${chapter.chapterNumber}`;
 
@@ -44,19 +37,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         chapterHeading.textContent = `第${toKanjiNumber(chapter.chapterNumber)}章 ${chapter.chapterTitle}`;
         contentArea.appendChild(chapterHeading);
 
-        // 条文リスト
+        // 条文
         if (chapter.articles && chapter.articles.length > 0) {
             chapter.articles.forEach((article) => {
                 const articleId = `${chapterId}-article-${article.articleNumber}`;
 
-                // 条タイトル
                 const articleHeading = document.createElement("h3");
                 articleHeading.classList.add("article-heading");
                 articleHeading.id = articleId;
                 articleHeading.textContent = `第${article.articleNumber}条（${article.articleTitle}）`;
                 contentArea.appendChild(articleHeading);
 
-                // パラグラフ
                 if (article.paragraphs && article.paragraphs.length > 0) {
                     article.paragraphs.forEach((paraData) => {
                         let text, evidence, kingComment;
@@ -70,19 +61,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                             kingComment = paraData.kingComment || "";
                         }
 
-                        // パラグラフのラッパ
                         const paragraphDiv = document.createElement("div");
                         paragraphDiv.classList.add("article-paragraph");
 
-                        // 条文テキスト
+                        // --- 段落生成時 ---
+                        // 例: 各段落の p 要素を生成する際に
                         const textP = document.createElement("p");
                         textP.textContent = text;
+                        // 元のテキストを data-original 属性に保存
+                        textP.setAttribute("data-original", text);
                         paragraphDiv.appendChild(textP);
-
-                        // 検索対象に追加
                         allParagraphNodes.push(textP);
 
-                        // 参照ボックス（初期は閉じる）
+
+
                         const referenceBox = document.createElement("div");
                         referenceBox.classList.add("reference-box");
 
@@ -100,7 +92,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                         paragraphDiv.appendChild(referenceBox);
                         contentArea.appendChild(paragraphDiv);
 
-                        // クリックで開閉
                         paragraphDiv.addEventListener("click", () => {
                             paragraphDiv.classList.toggle("pinned");
                         });
@@ -118,16 +109,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("close-menu").addEventListener("click", () => {
         mobileMenu.classList.remove("active");
     });
-    // モバイルTOCがタップされたら閉じる
     document.querySelectorAll("#mobile-toc a").forEach(link => {
         link.addEventListener("click", () => {
             mobileMenu.classList.remove("active");
         });
     });
 
-    // PCスクロール時のTOCハイライト
     window.addEventListener("scroll", () => {
-        if (window.innerWidth < 768) return; // PCのみ
+        if (window.innerWidth < 768) return;
         const chapterHeadings = document.querySelectorAll(".chapter-heading");
         let currentChapterId = "";
         chapterHeadings.forEach((heading) => {
@@ -136,7 +125,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 currentChapterId = heading.id;
             }
         });
-        // リンク全部クリア
         const tocLinks = document.querySelectorAll("#toc a");
         tocLinks.forEach((link) => {
             link.classList.remove("active");
@@ -156,26 +144,94 @@ document.addEventListener("DOMContentLoaded", async () => {
     const searchLastBtn = document.getElementById("search-last");
     const searchCurrentSpan = document.getElementById("search-current");
 
-    let searchResults = []; // 検索ヒットした要素のリスト
-    let currentIndex = 0;   // 現在表示している検索結果のインデックス
+    let searchResults = [];
+    let currentIndex = 0;
 
-    // 検索モード ON/OFF
+    function escapeHTML(str) {
+        var div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function doSearch(keyword) {
+        clearHighlights();
+        searchResults = [];
+        currentIndex = 0;
+        if (!keyword) {
+            updateSearchUI();
+            return;
+        }
+        allParagraphNodes.forEach((p) => {
+            const text = p.textContent;
+            const reg = new RegExp(keyword, "gi");
+            const matches = [...text.matchAll(reg)];
+            if (matches.length > 0) {
+                let newHTML = "";
+                let lastIndex = 0;
+                matches.forEach((match, i) => {
+                    newHTML += escapeHTML(text.substring(lastIndex, match.index));
+                    newHTML += `<span class="highlight" data-occurrence-index="${i}">${escapeHTML(match[0])}</span>`;
+                    lastIndex = match.index + match[0].length;
+                });
+                newHTML += escapeHTML(text.substring(lastIndex));
+                p.innerHTML = newHTML;
+                const spans = p.querySelectorAll("span.highlight");
+                spans.forEach(span => {
+                    searchResults.push(span);
+                });
+            }
+        });
+        updateSearchUI();
+        if (searchResults.length > 0) {
+            scrollToResult(0);
+        }
+    }
+
+    // clearHighlights() の修正
+    function clearHighlights() {
+        // 保存している data-original の内容で全段落を復元
+        allParagraphNodes.forEach((p) => {
+            const originalText = p.getAttribute("data-original");
+            if (originalText !== null) {
+                p.innerHTML = escapeHTML(originalText);
+            }
+        });
+        searchResults = [];
+    }
+
+
+    function scrollToResult(index) {
+        document.querySelectorAll(".highlight.current").forEach(span => {
+            span.classList.remove("current");
+        });
+        const span = searchResults[index];
+        if (span) {
+            span.classList.add("current");
+            span.scrollIntoView({ behavior: "smooth", block: "center" });
+            currentIndex = index;
+            updateSearchUI();
+        }
+    }
+
+    function updateSearchUI() {
+        const total = searchResults.length;
+        const current = total === 0 ? 0 : (currentIndex + 1);
+        searchCurrentSpan.textContent = `${current}/${total}`;
+    }
+
     searchToggleBtn.addEventListener("click", () => {
         searchBar.classList.toggle("active");
         if (!searchBar.classList.contains("active")) {
-            // OFFになったら検索結果をクリア
             clearHighlights();
             searchInput.value = "";
             updateSearchUI();
         }
     });
 
-    // テキスト変更時に検索を実行
     searchInput.addEventListener("input", () => {
         doSearch(searchInput.value.trim());
     });
 
-    // ナビゲーションボタン
     searchFirstBtn.addEventListener("click", () => {
         if (searchResults.length > 0) {
             currentIndex = 0;
@@ -200,62 +256,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             scrollToResult(currentIndex);
         }
     });
-
-    function doSearch(keyword) {
-        clearHighlights();
-        searchResults = [];
-        currentIndex = 0;
-
-        if (!keyword) {
-            updateSearchUI();
-            return;
-        }
-
-        // 全段落を対象に検索
-        allParagraphNodes.forEach((p) => {
-            const text = p.textContent;
-            const reg = new RegExp(keyword, "gi"); // 大文字小文字区別なし
-
-            if (text.match(reg)) {
-                // 置換してハイライト
-                const highlighted = text.replace(reg, (m) => `<span class="highlight">${m}</span>`);
-                p.innerHTML = highlighted;
-                searchResults.push(p);
-            }
-        });
-
-        updateSearchUI();
-        // 最初のヒットに飛ぶ
-        if (searchResults.length > 0) {
-            scrollToResult(0);
-        }
-    }
-
-    function clearHighlights() {
-        // 以前のハイライトを除去
-        searchResults.forEach((p) => {
-            p.innerHTML = p.textContent; // ハイライトを解除
-        });
-        searchResults = [];
-    }
-
-    function scrollToResult(index) {
-        const p = searchResults[index];
-        p.scrollIntoView({ behavior: "smooth", block: "center" });
-        currentIndex = index;
-        updateSearchUI();
-    }
-
-    function updateSearchUI() {
-        const total = searchResults.length;
-        const current = total === 0 ? 0 : (currentIndex + 1);
-        searchCurrentSpan.textContent = `${current}/${total}`;
-    }
 });
 
-/************************************************
- * 漢数字変換 (簡易)
- ***********************************************/
 function toKanjiNumber(num) {
     const kanjiNumbers = ["〇", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
     if (num < 10) {
@@ -269,5 +271,5 @@ function toKanjiNumber(num) {
         if (ones > 0) result += kanjiNumbers[ones];
         return result;
     }
-    return num; // 100以上はそのまま数字表示
+    return num;
 }
