@@ -1,5 +1,5 @@
 /* ================================
-  ルート変数定義
+   ルート変数定義
 ================================ */
 :root {
   /* 主要色 */
@@ -34,10 +34,13 @@
   --transition-fast: 0.2s;
   --transition-medium: 0.3s;
   --transition-long: 1s;
+
+  /* 検索ハイライト色 */
+  --highlight-bg: yellow;
 }
 
 /* ================================
-  ベースリセット
+   ベースリセット
 ================================ */
 * {
   margin: 0;
@@ -51,7 +54,7 @@ html {
 }
 
 /* ================================
-  ベーススタイル
+   ベーススタイル
 ================================ */
 body {
   font-family: var(--font-main);
@@ -61,7 +64,7 @@ body {
 }
 
 /* ================================
-  ヘッダー
+   ヘッダー
 ================================ */
 header {
   position: fixed;
@@ -82,6 +85,16 @@ header h1 {
   font-weight: 600;
 }
 
+/* 説明文（右寄せ・小さい字） */
+.header-description {
+  position: absolute;
+  /* タイトル下に配置 */
+  right: 1rem;
+  bottom: 0.2rem;
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
 #menu-button {
   position: absolute;
   left: 16px;
@@ -94,8 +107,67 @@ header h1 {
   /* PCでは非表示 */
 }
 
+/* 検索アイコン */
+#search-toggle {
+  position: absolute;
+  right: 16px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
 /* ================================
-  コンテナ
+   検索UI (PCはヘッダー下、スマホは画面下)
+================================ */
+#search-bar {
+  position: absolute;
+  top: calc(var(--header-height) + 5px);
+  /* ヘッダーの下あたり(PC) */
+  right: 1rem;
+  background-color: var(--color-panel);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  display: none;
+  /* 初期は非表示 */
+  z-index: 1500;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#search-bar.active {
+  display: flex;
+  /* 表示 */
+}
+
+#search-input {
+  width: 150px;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.9rem;
+}
+
+.search-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.search-nav button {
+  cursor: pointer;
+}
+
+#search-current {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+/* ================================
+   コンテナ
 ================================ */
 .container {
   display: flex;
@@ -106,7 +178,7 @@ header h1 {
 }
 
 /* ================================
-  サイドバー（PC表示）
+   サイドバー（PC表示）
 ================================ */
 nav#sidebar {
   width: var(--sidebar-width);
@@ -150,7 +222,7 @@ nav#sidebar h2 {
 }
 
 /* ================================
-  スマホ用オーバーレイメニュー
+   スマホ用オーバーレイメニュー
 ================================ */
 #mobile-menu {
   position: fixed;
@@ -163,8 +235,6 @@ nav#sidebar h2 {
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
   transition: left var(--transition-medium) ease-in-out;
   z-index: 2000;
-
-  /* 目次をスクロールさせるためflexを使用 */
   display: flex;
   flex-direction: column;
 }
@@ -173,14 +243,11 @@ nav#sidebar h2 {
   left: 0;
 }
 
-/* メニュー上部（×ボタン）エリア */
 #mobile-menu-header {
   flex: 0 0 auto;
-  /* 高さ自動(内容分) */
   padding: var(--spacing-unit);
 }
 
-/* ×ボタン */
 #close-menu {
   background-color: #fff;
   color: var(--color-primary);
@@ -192,16 +259,12 @@ nav#sidebar h2 {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* メニューのスクロール部分 */
 #mobile-menu-body {
   flex: 1 1 auto;
-  /* 残りの空間を使う */
   overflow-y: auto;
-  /* 縦スクロール */
   padding: var(--spacing-unit);
 }
 
-/* 中のリンク */
 #mobile-toc a {
   display: block;
   text-decoration: none;
@@ -217,10 +280,8 @@ nav#sidebar h2 {
   color: #fff;
 }
 
-
-
 /* ================================
-  本文エリア
+   本文エリア
 ================================ */
 main#content-area {
   flex: 1;
@@ -242,7 +303,6 @@ main#content-area {
   scroll-margin-top: calc(var(--header-height) + 20px);
 }
 
-/* 章見出し */
 .chapter-heading {
   font-size: 1.3rem;
   margin-top: 2rem;
@@ -253,7 +313,6 @@ main#content-area {
   padding-left: 0.5rem;
 }
 
-/* 条見出し */
 .article-heading {
   font-size: 1.1rem;
   margin: 1.2rem 0 0.5rem 0;
@@ -261,14 +320,11 @@ main#content-area {
   font-weight: 600;
 }
 
-/* ================================
-  パラグラフ＆エビデンス表示
-================================ */
+/* パラグラフ＆エビデンス表示 */
 .article-paragraph>p {
   text-indent: 1rem;
 }
 
-/* --- アニメーション前の閉じた状態 --- */
 .reference-box {
   font-size: 0.8rem;
   max-height: 0;
@@ -279,15 +335,13 @@ main#content-area {
 }
 
 .reference-box>p {
-  margin: .25rem;
+  margin: 0.25rem;
 }
 
-/* pinned時に高さを大きくし、内容を表示 */
 .article-paragraph.pinned .reference-box {
   max-height: 500px;
 }
 
-/* エビデンスのspanを角丸グレー背景に */
 .reference-box p span,
 .reference-info span {
   background-color: var(--color-ref-span);
@@ -297,13 +351,15 @@ main#content-area {
   line-height: 1.5rem;
 }
 
-/* pinnedクラスが付いている場合は常に表示 */
-.article-paragraph.pinned .reference-info {
-  display: block;
+/* 検索ハイライト */
+.highlight {
+  background-color: var(--highlight-bg);
+  color: #000;
+  /* 背景黄色なので文字は黒系に */
 }
 
 /* ================================
-  スマホ表示時
+   スマホ表示時
 ================================ */
 @media (max-width: 767px) {
   nav#sidebar {
@@ -316,9 +372,32 @@ main#content-area {
     /* スマホでハンバーガーメニュー表示 */
   }
 
+  /* 検索バーを画面下部に固定 */
+  #search-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 90%;
+    border-radius: 0;
+    display: none;
+    justify-content: center;
+    transition: 1s;
+  }
+
+  #search-bar.active {
+    display: flex;
+  }
+
   main#content-area {
     margin: 0;
     width: 100%;
     padding: 1rem;
+  }
+
+  .header-description {
+    display: none;
+    /* スマホで説明文を隠す場合 */
   }
 }

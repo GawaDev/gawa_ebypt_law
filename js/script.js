@@ -4,12 +4,14 @@
 document.addEventListener("DOMContentLoaded", async () => {
     let lawData;
     try {
+        // JSONファイル読み込み
         const response = await fetch("data/ebypt_law.json");
         lawData = await response.json();
     } catch (error) {
         console.error("JSONデータの取得に失敗しました:", error);
         return;
     }
+
     const tocElement = document.getElementById("toc");
     const mobileTocElement = document.getElementById("mobile-toc");
     const contentArea = document.getElementById("content-area");
@@ -17,6 +19,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // タイトル設定
     lawTitleElement.textContent = lawData.title || "無題の法律";
+
+    // すべてのパラグラフDOMを保存し、検索対象にする
+    let allParagraphNodes = [];
 
     // 章・条文生成
     lawData.chapters.forEach((chapter) => {
@@ -74,6 +79,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                         textP.textContent = text;
                         paragraphDiv.appendChild(textP);
 
+                        // 検索対象に追加
+                        allParagraphNodes.push(textP);
+
                         // 参照ボックス（初期は閉じる）
                         const referenceBox = document.createElement("div");
                         referenceBox.classList.add("reference-box");
@@ -104,19 +112,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // ハンバーガーメニュー開閉
     const mobileMenu = document.getElementById("mobile-menu");
-
     document.getElementById("menu-button").addEventListener("click", () => {
         mobileMenu.classList.add("active");
     });
-
     document.getElementById("close-menu").addEventListener("click", () => {
         mobileMenu.classList.remove("active");
     });
-
-    // ★ 追加：モバイル目次がタップされたら閉じる
+    // モバイルTOCがタップされたら閉じる
     document.querySelectorAll("#mobile-toc a").forEach(link => {
         link.addEventListener("click", () => {
-            // メニューを閉じる
             mobileMenu.classList.remove("active");
         });
     });
@@ -141,8 +145,113 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     });
-});
 
+    // ======== 検索機能 =========
+    const searchToggleBtn = document.getElementById("search-toggle");
+    const searchBar = document.getElementById("search-bar");
+    const searchInput = document.getElementById("search-input");
+    const searchFirstBtn = document.getElementById("search-first");
+    const searchPrevBtn = document.getElementById("search-prev");
+    const searchNextBtn = document.getElementById("search-next");
+    const searchLastBtn = document.getElementById("search-last");
+    const searchCurrentSpan = document.getElementById("search-current");
+
+    let searchResults = []; // 検索ヒットした要素のリスト
+    let currentIndex = 0;   // 現在表示している検索結果のインデックス
+
+    // 検索モード ON/OFF
+    searchToggleBtn.addEventListener("click", () => {
+        searchBar.classList.toggle("active");
+        if (!searchBar.classList.contains("active")) {
+            // OFFになったら検索結果をクリア
+            clearHighlights();
+            searchInput.value = "";
+            updateSearchUI();
+        }
+    });
+
+    // テキスト変更時に検索を実行
+    searchInput.addEventListener("input", () => {
+        doSearch(searchInput.value.trim());
+    });
+
+    // ナビゲーションボタン
+    searchFirstBtn.addEventListener("click", () => {
+        if (searchResults.length > 0) {
+            currentIndex = 0;
+            scrollToResult(currentIndex);
+        }
+    });
+    searchPrevBtn.addEventListener("click", () => {
+        if (searchResults.length > 0) {
+            currentIndex = (currentIndex - 1 + searchResults.length) % searchResults.length;
+            scrollToResult(currentIndex);
+        }
+    });
+    searchNextBtn.addEventListener("click", () => {
+        if (searchResults.length > 0) {
+            currentIndex = (currentIndex + 1) % searchResults.length;
+            scrollToResult(currentIndex);
+        }
+    });
+    searchLastBtn.addEventListener("click", () => {
+        if (searchResults.length > 0) {
+            currentIndex = searchResults.length - 1;
+            scrollToResult(currentIndex);
+        }
+    });
+
+    function doSearch(keyword) {
+        clearHighlights();
+        searchResults = [];
+        currentIndex = 0;
+
+        if (!keyword) {
+            updateSearchUI();
+            return;
+        }
+
+        // 全段落を対象に検索
+        allParagraphNodes.forEach((p) => {
+            const text = p.textContent;
+            const reg = new RegExp(keyword, "gi"); // 大文字小文字区別なし
+
+            if (text.match(reg)) {
+                // 置換してハイライト
+                const highlighted = text.replace(reg, (m) => `<span class="highlight">${m}</span>`);
+                p.innerHTML = highlighted;
+                searchResults.push(p);
+            }
+        });
+
+        updateSearchUI();
+        // 最初のヒットに飛ぶ
+        if (searchResults.length > 0) {
+            scrollToResult(0);
+        }
+    }
+
+    function clearHighlights() {
+        // 以前のハイライトを除去
+        searchResults.forEach((p) => {
+            p.innerHTML = p.textContent; // ハイライトを解除
+        });
+        searchResults = [];
+    }
+
+    function scrollToResult(index) {
+        const p = searchResults[index];
+        p.scrollIntoView({ behavior: "smooth", block: "center" });
+        currentIndex = index;
+        updateSearchUI();
+    }
+
+    function updateSearchUI() {
+        const total = searchResults.length;
+        const current = total === 0 ? 0 : (currentIndex + 1);
+        searchCurrentSpan.textContent = `${current}/${total}`;
+    }
+});
 
 /************************************************
  * 漢数字変換 (簡易)

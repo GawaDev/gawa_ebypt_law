@@ -15,7 +15,21 @@
     <header>
         <button id="menu-button">☰</button>
         <h1>えびぷと国法律</h1>
+        <button id="search-toggle">🔍</button>
+        <p class="header-description">（ここに小さな説明文が入ります）</p>
     </header>
+
+    <!-- 検索バー -->
+    <div id="search-bar">
+        <input type="text" id="search-input" placeholder="キーワードを入力…">
+        <div class="search-nav">
+            <button id="search-first">&laquo;</button>
+            <button id="search-prev">&lt;</button>
+            <span id="search-current">0/0</span>
+            <button id="search-next">&gt;</button>
+            <button id="search-last">&raquo;</button>
+        </div>
+    </div>
 
     <!-- コンテナ -->
     <div class="container">
@@ -32,13 +46,11 @@
             <div id="mobile-menu-header">
                 <button id="close-menu">✕</button>
             </div>
-
             <!-- 2) スクロール領域（目次リンク） -->
             <div id="mobile-menu-body">
                 <div id="mobile-toc"></div>
             </div>
         </div>
-
 
         <!-- メインコンテンツ -->
         <main id="content-area">
