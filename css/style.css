@@ -63,7 +63,7 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg);
   line-height: var(--line-height);
-  background-image: url('assets/background.png');
+  background-image: url('https://ebypt-law.vercel.app/assets/background.png');
   /* 画像のパスに置き換えてください */
   background-repeat: repeat;
   /* 繰り返し（タイル状） */
@@ -348,7 +348,6 @@ main#content-area {
   padding: 2rem;
   padding-bottom: 5rem;
   /* 固定説明文分の余白 */
-  background-color: var(--color-bg);
 }
 
 .law-title {
