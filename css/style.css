@@ -63,6 +63,16 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg);
   line-height: var(--line-height);
+  background-image: url('assets/background.png');
+  /* 画像のパスに置き換えてください */
+  background-repeat: repeat;
+  /* 繰り返し（タイル状） */
+  background-size: auto;
+  /* 必要なら cover, contain, 指定サイズなど */
+  background-position: top left;
+  /* 左上から配置 */
+  background-color: #fbe9ef;
+  /* 画像が読み込まれないときのバックアップ色（薄桃色） */
 }
 
 /* ================================
